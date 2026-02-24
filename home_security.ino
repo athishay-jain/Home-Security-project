@@ -117,20 +117,39 @@ void loop() {
 
   long doorDistance = getDistance(TRIG1, ECHO1);
   long windowDistance = getDistance(TRIG2, ECHO2);
+// -------- Door Detection ----------
+static bool personDetected = false;
 
-  // -------- Door Detection ----------
-  if (doorDistance < doorThreshold && homeLocked && !doorAlertActive) {
-    doorAlertActive = true;
-    alertStartTime = millis();
-    digitalWrite(LED_PIN, HIGH);
-    digitalWrite(BUZZER_PIN, HIGH);
+if (doorDistance < doorThreshold) {
+
+  if (!personDetected) {
+    personDetected = true;
+
+    if (homeLocked) {
+      // Locked → 7 second alarm
+      doorAlertActive = true;
+      alertStartTime = millis();
+      digitalWrite(LED_PIN, HIGH);
+      digitalWrite(BUZZER_PIN, HIGH);
+    } 
+    else {
+      // Door open → single short beep
+      digitalWrite(BUZZER_PIN, HIGH);
+      delay(200);
+      digitalWrite(BUZZER_PIN, LOW);
+    }
   }
 
-  if (doorAlertActive && millis() - alertStartTime > 7000) {
-    digitalWrite(LED_PIN, LOW);
-    digitalWrite(BUZZER_PIN, LOW);
-    doorAlertActive = false;
-  }
+} else {
+  personDetected = false;
+}
+
+// Stop 7 sec locked alarm
+if (doorAlertActive && millis() - alertStartTime > 7000) {
+  digitalWrite(LED_PIN, LOW);
+  digitalWrite(BUZZER_PIN, LOW);
+  doorAlertActive = false;
+}
 
   // -------- Window Detection ----------
   if (windowDistance < windowThreshold && !windowAlertActive) {
