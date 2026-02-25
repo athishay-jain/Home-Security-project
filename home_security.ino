@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266Servo.h>   // ✅ Correct Servo Library for ESP8266
+#include <ESP8266Servo.h>  
 
 // ---------------- PIN DEFINITIONS ----------------
 #define TRIG1 D5
